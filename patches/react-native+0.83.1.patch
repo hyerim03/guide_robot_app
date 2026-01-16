@@ -1,0 +1,48 @@
+diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/i18nmanager/I18nUtil.kt b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/i18nmanager/I18nUtil.kt
+index 38df17e..50715d5 100644
+--- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/i18nmanager/I18nUtil.kt
++++ b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/i18nmanager/I18nUtil.kt
+@@ -68,16 +68,33 @@ public class I18nUtil private constructor() {
+       return directionality == View.LAYOUT_DIRECTION_RTL
+     }
+ 
+-  private fun isPrefSet(context: Context, key: String, defaultValue: Boolean): Boolean =
+-      context
+-          .getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+-          .getBoolean(key, defaultValue)
+-
+-  private fun setPref(context: Context, key: String, value: Boolean) {
+-    val editor = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit()
+-    editor.putBoolean(key, value)
+-    editor.apply()
+-  }
++//  private fun isPrefSet(context: Context, key: String, defaultValue: Boolean): Boolean =
++//      context
++//          .getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
++//          .getBoolean(key, defaultValue)
++//
++//  private fun setPref(context: Context, key: String, value: Boolean) {
++//    val editor = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit()
++//    editor.putBoolean(key, value)
++//    editor.apply()
++//  }
++
++    private fun deContext(context: Context): Context =
++        context.applicationContext.createDeviceProtectedStorageContext()
++
++    private fun isPrefSet(context: Context, key: String, defaultValue: Boolean): Boolean =
++        deContext(context)
++            .getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
++            .getBoolean(key, defaultValue)
++
++    private fun setPref(context: Context, key: String, value: Boolean) {
++        val editor =
++            deContext(context)
++                .getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
++                .edit()
++        editor.putBoolean(key, value)
++        editor.apply()
++    }
+ 
+   public companion object {
+     public val instance: I18nUtil = I18nUtil()

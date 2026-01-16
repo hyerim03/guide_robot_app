@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SerialApp</string>
+    <string name="accessibility_usb_desc">USB 권한 팝업 자동 확인</string>
+</resources>
