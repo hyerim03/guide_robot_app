@@ -1,0 +1,75 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.MANAGE_USB" />
+
+    <application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme"
+      android:usesCleartextTraffic="${usesCleartextTraffic}"
+      android:supportsRtl="true">
+
+      <!-- 권한 자동 확인 기능 -->
+      <service
+    android:name=".UsbAutoConfirmService"
+    android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+    android:exported="false">
+    
+    <intent-filter>
+        <action android:name="android.accessibilityservice.AccessibilityService" />
+    </intent-filter>
+
+    <meta-data
+        android:name="android.accessibilityservice"
+        android:resource="@xml/usb_accessibility_config" />
+</service>
+
+
+        <receiver
+          android:name=".DirectBootReceiver"
+          android:directBootAware="true"
+          android:exported="false">
+          <intent-filter>
+            <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+          </intent-filter>
+        </receiver>
+
+         <receiver
+            android:name=".UserUnlockedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_UNLOCKED" />
+            </intent-filter>
+        </receiver>
+      <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+        android:launchMode="singleTask"
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true">
+  <intent-filter>
+    <action android:name="android.intent.action.MAIN" />
+    <category android:name="android.intent.category.LAUNCHER" />
+  </intent-filter>
+
+  <intent-filter>
+    <action android:name="android.intent.action.MAIN" />
+    <category android:name="android.intent.category.HOME" />
+    <category android:name="android.intent.category.DEFAULT" />
+  </intent-filter>
+
+  <intent-filter>
+    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+  </intent-filter>
+        <meta-data
+          android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+          android:resource="@xml/usb_device_filter" />
+      </activity>
+    </application>
+</manifest>
