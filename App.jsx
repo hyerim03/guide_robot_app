@@ -14,6 +14,7 @@ import {
 import Slide from './components/Slide';
 import RNRestart from 'react-native-restart';
 import ExitBox from './components/ExitBox';
+import { useRosConnect } from './hook/useRosConnect';
 
 const list = [
   { time: 10000, char: 'b' },
@@ -48,6 +49,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null); // 선택된 deviceId
   const [portIf, setPortIf] = useState(0);
   const [connected, setConnected] = useState(false);
+  const rosRef = useRosConnect('ws://192.168.10.141:9090');
 
   const selectedIdRef = useRef(null);
   const connectingRef = useRef(false);
@@ -190,7 +192,7 @@ export default function App() {
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', async state => {
-      if (state !== 'active') {
+      if (state === 'active') {
         searchAndConnect();
       } else {
         const id = selectedIdRef.current;
