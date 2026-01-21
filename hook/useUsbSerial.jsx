@@ -5,13 +5,13 @@ import RNRestart from 'react-native-restart';
 import { useSerialport } from '@serserm/react-native-turbo-serialport';
 
 export function useUsbSerial() {
-  const [devices, setDevices] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [portIf, setPortIf] = useState(0);
   const [connected, setConnected] = useState(false);
 
   const selectedIdRef = useRef(null);
   const connectingRef = useRef(false);
+  const openErrCountRef = useRef(0);
 
   useEffect(() => {
     selectedIdRef.current = selectedId;
@@ -20,6 +20,12 @@ export function useUsbSerial() {
   const serialport = useSerialport({
     onError: ({ errorMessage }) => {
       if (String(errorMessage).includes('open')) {
+        openErrCountRef.current += 1;
+        if (openErrCountRef.current <= 2) {
+          connectingRef.current = false;
+          setTimeout(() => searchAndConnect(), 700);
+          return;
+        }
         console.log('errorMessaage', errorMessage);
         Alert.alert(
           'USB 오류',
@@ -44,7 +50,7 @@ export function useUsbSerial() {
     },
     onDeviceAttached: () => {
       console.log('Device attached');
-      searchAndConnect();
+      setTimeout(() => searchAndConnect(), 500);
     },
     onDeviceDetached: () => {
       console.log('Device detached');
@@ -60,9 +66,7 @@ export function useUsbSerial() {
     connectingRef.current = true;
 
     try {
-      if (connected && selectedIdRef.current != null) return;
       const res = await serialport.listDevices();
-      setDevices(res || []);
 
       if (!res?.length) {
         setSelectedId(null);
@@ -82,10 +86,15 @@ export function useUsbSerial() {
         } catch {}
         await new Promise(r => setTimeout(r, 300));
       }
+
       console.log(
-        `Found: deviceId=${first.deviceId}, name=${first.deviceName}, first:${first}`,
+        '[TRY CONNECT]',
+        first.deviceId,
+        'currentId=',
+        currentId,
+        'connected=',
+        connected,
       );
-      console.log(`Connecting... deviceId=${first.deviceId}`);
 
       await serialport.connect(first.deviceId);
     } finally {
@@ -129,17 +138,9 @@ export function useUsbSerial() {
   }, []);
 
   return {
-    // state
-    devices,
+    connected,
     selectedId,
     portIf,
-    connected,
-
-    // actions
-    searchAndConnect,
     sendChar,
-
-    // if needed outside
-    serialport,
   };
 }

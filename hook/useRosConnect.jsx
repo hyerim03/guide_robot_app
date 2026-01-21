@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as ROSLIB from 'roslib';
 
-export function useRosConnect(url = 'ws://192.168.10.141:9090') {
+export function useRosConnect(url) {
   const rosRef = useRef(null);
   const [topics, setTopics] = useState([]);
 

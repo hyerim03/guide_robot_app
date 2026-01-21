@@ -17,6 +17,8 @@ Sound.setCategory('Playback');
 const Slide = () => {
   const [index, setIndex] = useState(0);
 
+  const welcomeRef = useRef(null);
+
   const welcome = setSound({
     file: 'welcome_sound.mp3',
     name: 'welcome_sound',
