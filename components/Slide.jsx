@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Image } from 'react-native';
 import Sound from 'react-native-sound';
 import setSound from '../util/setSound';
+import ExitBox from './ExitBox';
 
 const img = [
-  require('../assets/app_01.png'),
   require('../assets/app_02.png'),
   require('../assets/app_03.png'),
   require('../assets/app_04.png'),
@@ -50,7 +50,7 @@ const Slide = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex(prev => {
-        if (prev === 4) {
+        if (prev === 3) {
           const sound = welcomeRef.current;
           if (sound) {
             try {
@@ -66,7 +66,9 @@ const Slide = () => {
   }, []);
 
   return (
-    <Image source={img[index]} style={{ width: '100%', height: '100%' }} />
+    <ExitBox>
+      <Image source={img[index]} style={{ width: '100%', height: '100%' }} />
+    </ExitBox>
   );
 };
 

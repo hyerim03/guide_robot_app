@@ -1,9 +1,53 @@
 import { Text, StyleSheet, Pressable, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { useEffect, useRef } from 'react';
+import setSound from '../util/setSound';
 
 const StartScreen = () => {
   const navigation = useNavigation();
+
+  const welcomeRef = useRef(null);
+
+  useEffect(() => {
+    welcomeRef.current = setSound({
+      file: 'welcome_sound.mp3',
+      name: 'welcome_sound',
+    });
+
+    return () => {
+      try {
+        welcomeRef.current?.stop();
+        welcomeRef.current?.release();
+      } catch {}
+      welcomeRef.current = null;
+    };
+  });
+  // 초기 화면을 열자마자 1회 실행하는 코드
+  useEffect(() => {
+    const time = setTimeout(() => {
+      const sound = welcomeRef.current;
+      if (!sound) return;
+      try {
+        sound.stop(() => sound.play());
+      } catch {}
+    }, 120);
+
+    return () => clearTimeout(time);
+  }, []);
+
+  // 반복 실행하는 코드
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const sound = welcomeRef.current;
+      if (sound) {
+        try {
+          sound.stop(() => sound.play());
+        } catch {}
+      }
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View style={styles.container}>

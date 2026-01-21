@@ -21,17 +21,17 @@ import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 
 export default function App() {
-  // useRosConnect('ws://192.168.10.141:9090');
+  useRosConnect('ws://192.168.10.141:9090');
 
-  // const { connected, selectedId, portIf, sendChar } = useUsbSerial();
+  const { connected, selectedId, portIf, sendChar } = useUsbSerial();
 
-  // useEyeSequence({
-  //   connected,
-  //   selectedId,
-  //   portIf,
-  //   list: eyeSequence,
-  //   sendChar,
-  // });
+  useEyeSequence({
+    connected,
+    selectedId,
+    portIf,
+    list: eyeSequence,
+    sendChar,
+  });
 
   return (
     <NavigationContainer>
@@ -45,8 +45,5 @@ export default function App() {
         <Stack.Screen name="slide" component={Slide} />
       </Stack.Navigator>
     </NavigationContainer>
-    // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    //   <Text style={{ color: 'red', fontSize: 30 }}>APP ROOT OK</Text>
-    // </View>
   );
 }
