@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Sound from 'react-native-sound';
 import setSound from '../util/setSound';
 
@@ -19,44 +18,48 @@ const Slide = () => {
 
   const welcomeRef = useRef(null);
 
-  const welcome = setSound({
-    file: 'welcome_sound.mp3',
-    name: 'welcome_sound',
-  });
-
-  const welcomeRef = useRef(null);
-  const readyRef = useRef(false);
-
-  // 첫 인사 음원 재생 로직
   useEffect(() => {
-    readyRef.current = true;
-    if (index === 0) {
-      setTimeout(() => {
-        welcome.stop(() => welcome.play());
-      }, 120);
-    }
-
-    welcomeRef.current = welcome;
+    welcomeRef.current = setSound({
+      file: 'welcome_sound.mp3',
+      name: 'welcome_sound',
+    });
 
     return () => {
       try {
-        welcome.stop();
-        welcome.release();
+        welcomeRef.current?.stop();
+        welcomeRef.current?.release();
       } catch {}
       welcomeRef.current = null;
-      readyRef.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (index !== 0) return;
+
+    const time = setTimeout(() => {
+      const sound = welcomeRef.current;
+      if (!sound) return;
+      try {
+        sound.stop(() => sound.play());
+      } catch {}
+    }, 120);
+
+    return () => clearTimeout(time);
+  }, [index]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex(prev => {
         if (prev === 4) {
-          welcome.play();
+          const sound = welcomeRef.current;
+          if (sound) {
+            try {
+              sound.stop(() => sound.play());
+            } catch {}
+          }
         }
         return (prev + 1) % img.length;
       });
-      console.log(index);
     }, 10000);
 
     return () => clearInterval(interval);
