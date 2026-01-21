@@ -2,10 +2,12 @@ import { Text, StyleSheet, Pressable, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useRef } from 'react';
 import setSound from '../util/setSound';
+import Sound from 'react-native-sound';
+
+Sound.setCategory('Playback');
 
 const StartScreen = () => {
   const navigation = useNavigation();
-
   const welcomeRef = useRef(null);
 
   useEffect(() => {

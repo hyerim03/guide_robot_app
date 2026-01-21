@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import Sound from 'react-native-sound';
 import setSound from '../util/setSound';
 import ExitBox from './ExitBox';
+import { useNavigation } from '@react-navigation/native';
 
 const img = [
   require('../assets/app_02.png'),
@@ -11,54 +12,19 @@ const img = [
   require('../assets/app_05.png'),
 ];
 
-Sound.setCategory('Playback');
-
 const Slide = () => {
   const [index, setIndex] = useState(0);
 
-  const welcomeRef = useRef(null);
-
-  useEffect(() => {
-    welcomeRef.current = setSound({
-      file: 'welcome_sound.mp3',
-      name: 'welcome_sound',
-    });
-
-    return () => {
-      try {
-        welcomeRef.current?.stop();
-        welcomeRef.current?.release();
-      } catch {}
-      welcomeRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (index !== 0) return;
-
-    const time = setTimeout(() => {
-      const sound = welcomeRef.current;
-      if (!sound) return;
-      try {
-        sound.stop(() => sound.play());
-      } catch {}
-    }, 120);
-
-    return () => clearTimeout(time);
-  }, [index]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex(prev => {
         if (prev === 3) {
-          const sound = welcomeRef.current;
-          if (sound) {
-            try {
-              sound.stop(() => sound.play());
-            } catch {}
-          }
+          navigation.navigate('start');
+        } else {
+          return (prev + 1) % 4;
         }
-        return (prev + 1) % img.length;
       });
     }, 10000);
 
