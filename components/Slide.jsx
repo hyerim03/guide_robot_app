@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { Image } from 'react-native';
-import Sound from 'react-native-sound';
-import setSound from '../util/setSound';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, Image, View, Dimensions } from 'react-native';
 import ExitBox from './ExitBox';
+import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+
+const { width: W, height: H } = Dimensions.get('screen');
 
 const img = [
   require('../assets/app_02.png'),
@@ -13,27 +14,77 @@ const img = [
 ];
 
 const Slide = () => {
-  const [index, setIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const sliderRef = useRef(null);
+  const timerRef = useRef(null);
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex(prev => {
-        if (prev === 3) {
-          navigation.navigate('start');
-        } else {
-          return (prev + 1) % 4;
-        }
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(() => {
+      if (currentIndex === img.length - 1) {
+        navigation.navigate('start');
+        return;
+      }
+
+      sliderRef.current?.scrollToIndex({
+        index: currentIndex + 1,
+        animated: true,
       });
     }, 10000);
+  }, [currentIndex, navigation]);
 
-    return () => clearInterval(interval);
+  const viewableItemsChanged = useCallback(({ viewableItems }) => {
+    if (viewableItems?.length > 0 && viewableItems[0].index != null) {
+      setCurrentIndex(viewableItems[0].index);
+    }
   }, []);
+
+  useEffect(() => {
+    resetTimer();
+    return () => clearTimeout(timerRef.current);
+  }, [currentIndex, resetTimer]);
+
+  const renderItem = ({ item }) => (
+    <View
+      style={{
+        width: W,
+        height: H,
+      }}
+    >
+      <Image
+        source={item}
+        style={{ width: '100%', height: '100%' }}
+        resizeMode="cover"
+      />
+    </View>
+  );
 
   return (
     <ExitBox>
-      <Image source={img[index]} style={{ width: '100%', height: '100%' }} />
+      <FlatList
+        ref={sliderRef}
+        data={img}
+        renderItem={renderItem}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        keyExtractor={(_, i) => String(i)}
+        onScrollBeginDrag={resetTimer}
+        onMomentumScrollEnd={resetTimer}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false },
+        )}
+        onViewableItemsChanged={viewableItemsChanged}
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 50 }}
+      />
     </ExitBox>
   );
 };

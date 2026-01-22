@@ -3,6 +3,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useEffect, useRef } from 'react';
 import setSound from '../util/setSound';
 import Sound from 'react-native-sound';
+import LinearGradient from 'react-native-linear-gradient';
+import ExitBox from '../components/ExitBox';
 
 Sound.setCategory('Playback');
 
@@ -23,19 +25,20 @@ const StartScreen = () => {
       } catch {}
       welcomeRef.current = null;
     };
-  });
-  // 초기 화면을 열자마자 1회 실행하는 코드
-  useEffect(() => {
-    const time = setTimeout(() => {
-      const sound = welcomeRef.current;
-      if (!sound) return;
-      try {
-        sound.stop(() => sound.play());
-      } catch {}
-    }, 120);
-
-    return () => clearTimeout(time);
   }, []);
+
+  // 초기 화면을 열자마자 1회 실행하는 코드
+  // useEffect(() => {
+  //   const time = setTimeout(() => {
+  //     const sound = welcomeRef.current;
+  //     if (!sound) return;
+  //     try {
+  //       sound.stop(() => sound.play());
+  //     } catch {}
+  //   }, 120);
+
+  //   return () => clearTimeout(time);
+  // }, []);
 
   // 반복 실행하는 코드
   useEffect(() => {
@@ -52,18 +55,20 @@ const StartScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.mainText}>어서오세요</Text>
-      <Text style={styles.subText}>
-        안내를 받으시려면 {'\n'}아래 버튼을 눌러주세요.
-      </Text>
-      <Pressable
-        onPress={() => navigation.navigate('slide')}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>START</Text>
-      </Pressable>
-    </View>
+    <ExitBox>
+      <LinearGradient style={styles.container} colors={['#CCDFFF', '#ffffff']}>
+        <Text style={styles.mainText}>어서오세요</Text>
+        <Text style={styles.subText}>
+          안내를 받으시려면 {'\n'}아래 버튼을 눌러주세요.
+        </Text>
+        <Pressable
+          onPress={() => navigation.navigate('slide')}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>START</Text>
+        </Pressable>
+      </LinearGradient>
+    </ExitBox>
   );
 };
 
