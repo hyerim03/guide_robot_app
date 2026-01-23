@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Image } from 'react-native';
 import Sound from 'react-native-sound';
 import setSound from '../util/setSound';
@@ -17,47 +17,49 @@ const Slide = () => {
   const [index, setIndex] = useState(0);
 
   const welcomeRef = useRef(null);
+  const readyRef = useRef(false);
 
   useEffect(() => {
-    welcomeRef.current = setSound({
+    const welcome = setSound({
       file: 'welcome_sound.mp3',
       name: 'welcome_sound',
     });
 
-    return () => {
+    welcomeRef.current = welcome;
+    readyRef.current = true;
+
+    const t = setTimeout(() => {
+      const s = welcomeRef.current;
+      if (!s || !readyRef.current) return;
       try {
-        welcomeRef.current?.stop();
-        welcomeRef.current?.release();
+        s.stop(() => s.play());
+      } catch {}
+    }, 120);
+
+    return () => {
+      clearTimeout(t);
+      const s = welcomeRef.current;
+      try {
+        s?.stop();
+        s?.release();
       } catch {}
       welcomeRef.current = null;
+      readyRef.current = false;
     };
   }, []);
 
   useEffect(() => {
-    if (index !== 0) return;
-
-    const time = setTimeout(() => {
-      const sound = welcomeRef.current;
-      if (!sound) return;
-      try {
-        sound.stop(() => sound.play());
-      } catch {}
-    }, 120);
-
-    return () => clearTimeout(time);
-  }, [index]);
-
-  useEffect(() => {
     const interval = setInterval(() => {
       setIndex(prev => {
-        if (prev === 4) {
-          const sound = welcomeRef.current;
-          if (sound) {
-            try {
-              sound.stop(() => sound.play());
-            } catch {}
-          }
+        // if (prev === 4) {
+        const s = welcomeRef.current;
+        if (s && readyRef.current) {
+          try {
+            s.stop(() => s.play());
+          } catch {}
         }
+        // }
+
         return (prev + 1) % img.length;
       });
     }, 10000);
