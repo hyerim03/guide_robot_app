@@ -15,14 +15,25 @@ export function useRosConnect(url) {
       messageType: 'std_msgs/String',
     });
 
+    const getTopicList = new ROSLIB.Service({
+      ros,
+      name: '/rosapi/topics',
+      serviceType: 'rosapi/Topics',
+    });
+
     ros.connect(url);
 
     ros.on('connection', () => {
       console.log('ROS Connected!');
 
-      ros.getTopics(result => {
-        console.log('ROS Topics:', result);
-      });
+      // ros.getTopics(result => {
+      //   console.log('ROS Topics:', result);
+      // });
+      getTopicList.callService(
+        {},
+        res => console.log('topicList', res),
+        err => console.log(err),
+      );
 
       hello.subscribe(msg => {
         console.log('ros 전달 데이터', msg.data);

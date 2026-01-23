@@ -14,7 +14,7 @@
     "@serserm/react-native-turbo-serialport": "^2.2.2",
     "react": "19.2.0",
     "react-native": "0.83.1",
-    "react-native-get-random-values": "^2.0.0",
+    "react-native-get-random-values": "2.0.0",
     "react-native-polyfill-globals": "^3.1.0",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "^5.6.2",

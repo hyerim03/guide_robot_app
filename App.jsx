@@ -13,7 +13,7 @@ import { useEyeSequence } from './hook/useEyeSequence';
 ensureSerialInitOnce();
 
 export default function App() {
-  useRosConnect('ws://192.168.10.141:9090');
+  useRosConnect('ws://192.168.1.2:9090');
 
   const { connected, selectedId, portIf, sendChar } = useUsbSerial();
 
