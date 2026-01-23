@@ -14,7 +14,6 @@
     "@serserm/react-native-turbo-serialport": "^2.2.2",
     "react": "19.2.0",
     "react-native": "0.83.1",
-<<<<<<< HEAD
     "react-native-get-random-values": "^2.0.0",
     "react-native-polyfill-globals": "^3.1.0",
     "react-native-restart": "^0.0.27",
@@ -22,11 +21,6 @@
     "react-native-sound": "^0.13.0",
     "roslib": "^2.0.1",
     "text-encoding": "^0.7.0"
-=======
-    "react-native-restart": "^0.0.27",
-    "react-native-safe-area-context": "^5.6.2",
-    "react-native-sound": "^0.13.0"
->>>>>>> ecf20dd2866123c1614b21275404b48543762082
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

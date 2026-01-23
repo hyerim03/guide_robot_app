@@ -62,7 +62,7 @@ const Slide = () => {
 
         return (prev + 1) % img.length;
       });
-    }, 10000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
