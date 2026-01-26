@@ -51,14 +51,14 @@ const Slide = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex(prev => {
-        // if (prev === 4) {
-        const s = welcomeRef.current;
-        if (s && readyRef.current) {
-          try {
-            s.stop(() => s.play());
-          } catch {}
+        if (prev === 4) {
+          const s = welcomeRef.current;
+          if (s && readyRef.current) {
+            try {
+              s.stop(() => s.play());
+            } catch {}
+          }
         }
-        // }
 
         return (prev + 1) % img.length;
       });
